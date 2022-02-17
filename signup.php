@@ -1,23 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+<script>
+    function validation(){
+        var staffid = document.forms["RegForm"]["staffid"];
+        var email = document.forms["RegForm"]["email"];
+        var username = document.forms["RegForm"]["username"];
+        var password = document.forms["RegForm"]["password"];
 
+        if(staffid.value==""){
+            window.alert("Please enter a staff ID");
+            staffid.focus();
+            return false;
+        }
+
+        if(email ==""){
+            window.alert("Please enter your email");
+            email.focus();
+            return false;
+        }
+
+        if(username==""){
+            window.alert("Please enter your username");
+            username.focus();
+            return false;
+        }
+
+        if(password==""){
+            window.alert("Please enter a password");
+            password.focus();
+            return false;
+        }
+        return true;
+    }
+    </script>
     <title>KINDERCARE</title>
 
-    <!-- fonts -->
+    <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- styles -->
+    <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
     <style>
         .bg-login-image{
@@ -31,7 +61,7 @@
 
 </head>
 
-<body class="bg-gradient-success">
+<body class="bg-gradient-info">
 
     <div class="container">
 
@@ -42,19 +72,20 @@
 
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                       
+                        <!-- Nested Row within Card Body -->           
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h3 class="text-warning mb-4">
+                                        <h3 class="text-success mb-4">
                                         KINDERCARE <br> E-LEARNING SYSTEM</h3>
                                         <P class="text-primary" style ="font-size:20px;">Sign up to continue</P>
+                                        <p id = 'demo2' class = 'text-danger'></p>
+                                        <p id = 'demo1' class = 'text-success'></p>
                                     </div>
                                     <p id='warning'></p>
-                                    <form action="login.php" method="post">
+                                    <form name="RegForm" action="signup.php" onsubmit="return validation()" method="post">
                                     <div class="form-group">
                                             <input type="text" name="staffid" class="form-control form-control-user"
                                                 id="exampleInputPassword" placeholder="STAFF ID">
@@ -101,52 +132,49 @@
     <script src="js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>
-
-
 <?php
 if (isset($_POST['submit'])) {
     ob_start();
     include "config.php"; 
-  // this is to receive all input values from the form
-  $staffId = $_POST['staffid'];
-  $email = $_POST['email'];
-  $username = $_POST['username'];
-  $pass = $_POST['password'];
+  // receive all input values from the form
+  $staffId = mysqli_real_escape_string($conn, $_POST['staffid']);
+  $email = mysqli_real_escape_string($conn, $_POST['email']);
+  $username = mysqli_real_escape_string($conn, $_POST['username']);
+  $pass = mysqli_real_escape_string($conn, $_POST['password']);
 
-  echo($staffId);
-  echo($email);
-  echo($username);
-  echo($pass);
   $errors = array();
-  // initial: check the database to make sure a user does not already exist with the same username and/or email
+  // first check the database to make sure 
+  // a user does not already exist with the same username and/or email
   $signup_query = "SELECT * FROM teachersdetail WHERE  staffId='$staffId' OR email='$email' LIMIT 1";
   $result = mysqli_query($conn, $signup_query);
   $teacher = mysqli_fetch_assoc($result);
   
   if ($teacher) { 
-    if ($teacher['staffId'] == $staffId) {
+    if ($teacher['staffId'] === $staffId) {
         array_push($errors, "staff Id already exists");
       }
 
-    if ($teacher['email'] == $email) {
+    if ($teacher['email'] === $email) {
       array_push($errors, "email already exists");
     }
-  } 
+  }
 
-  if (count($errors) == 0) {
-      echo("HELLO");
+  if (count($errors) === 0) {
   	$query = "INSERT INTO teachersdetail (staffId, email, username, passcode) VALUES('$staffId', '$email','$username', '$pass')";
       mysqli_query($conn, $query);
-        header('location:login.php');
-        ob_end_flush();
+      echo "
+      <script>
+        document.getElementById('demo1').innerHTML = 'SIGN UP SUCCESSFUL, CLICK TO LOGIN';
+      </script>
+      ";
   }
   else{
-    echo 'Sign up failed!';
-    header('location:signup.php');
+    echo "
+      <script>
+        document.getElementById('demo2').innerHTML = 'SIGN UP FAILED, STAFF ID OR EMAIL ALREADY EXISTS';
+      </script>
+      ";
   }
 }
-
-        
 ?> 

@@ -15,6 +15,33 @@ include 'config.php';
     <meta name="description" content="">
     <meta name="author" content="">
 
+<script>
+    function validation(){
+        var fname = document.forms["RegPupil"]["fname"];
+        var lname = document.forms["RegPupil"]["lname"];
+        var pnumber = document.forms["RegPupil"]["pnumber"];
+
+        if(fname.value=""){
+            window.alert("Please enter your first name");
+            fname.focus();
+            return false;
+        }
+
+        if(fname.value=""){
+            window.alert("Please enter your last name");
+            lname.focus();
+            return false;
+        }
+
+        if(fname.value=""){
+            window.alert("Please enter your phone number");
+            pnumber.focus();
+            return false;
+        }
+        return true;
+    }
+    </script>
+
     <title>KINDERCARE</title>
 
     <!-- Custom fonts for this template-->
@@ -116,7 +143,7 @@ include 'config.php';
                     </div>
 
                     <!-- Content Row -->
-                    <form action="registeredPupil.php" method = "post">
+                    <form name = "RegPupil" action="registeredPupil.php" onsubmit="return validation" method = "post">
                         <div class="row">
                             <p class="text-primary">Register pupil</p>
                         </div>
